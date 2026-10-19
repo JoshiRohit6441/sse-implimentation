@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api.js";
 import { useAuth } from "../useAuth.js";
 
 export default function Shell() {
-  const { email, authed, signOut } = useAuth();
+  const { email, authed, checking, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const onExpire = () => {
@@ -53,7 +54,11 @@ export default function Shell() {
         </nav>
       </header>
       <main className="main">
-        <Outlet />
+        {checking ? <p className="lede">Checking your profile…</p> : null}
+        {!checking && authed && location.pathname !== "/book" ? (
+          <Navigate to="/book" replace />
+        ) : null}
+        {checking ? null : <Outlet />}
       </main>
     </div>
   );
